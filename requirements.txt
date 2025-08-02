@@ -1,0 +1,8 @@
+opencv-python
+numpy
+mysql-connector-python
+Pillow
+streamlit
+shapely
+ultralytics
+openai
