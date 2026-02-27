@@ -1,227 +1,122 @@
-Vehicle Speed Detection and Traffic Violation System
-Overview
+# Vehicle Speed Detection and Traffic Violation System
 
-This project is a real-time vehicle speed detection and traffic violation monitoring system built using computer vision and artificial intelligence techniques. The system processes video input, detects vehicles, tracks their movement across predefined lines, calculates their speed, and identifies traffic violations when the speed exceeds a specified threshold.
+## Overview
 
-Unlike traditional monitoring systems, this solution integrates object detection, speed estimation, optical character recognition (OCR), vehicle attribute analysis, and AI-powered violation reporting using the Gemini API.
+This project is a real-time vehicle speed detection and traffic violation monitoring system built using computer vision and artificial intelligence techniques.
 
-The final output is presented through an interactive Streamlit dashboard that displays only violating vehicles in a structured database table.
+The system processes video input, detects vehicles, tracks their movement across predefined lines, calculates their speed, and identifies violations when the speed exceeds a configured threshold.
 
-Features
+The project integrates object detection, speed estimation, OCR, vehicle attribute extraction, database storage, and AI-generated violation reports using the Gemini API.
 
-Real-time vehicle detection using YOLOv8
+The final output is presented through an interactive Streamlit dashboard that displays only violating vehicles in a structured table.
 
-Multi-object tracking
+---
 
-Speed estimation based on distance and time between two reference lines
+## Features
 
-License plate extraction using OCR
+- Real-time vehicle detection using YOLOv8
+- Multi-object tracking
+- Speed estimation using two reference lines
+- License plate recognition (OCR)
+- Vehicle color and model estimation
+- Violation detection (speed > threshold)
+- AI-generated violation report using Gemini API
+- MySQL database integration
+- Streamlit dashboard
+- Multi-video support with custom detection lines
 
-Vehicle color and model estimation
+---
 
-Violation detection (speed > predefined limit)
+## System Architecture
 
-AI-generated violation report using Gemini API
+### 1. Object Detection
+YOLOv8 detects vehicles in each video frame and generates bounding boxes.
 
-MySQL database integration
+### 2. Object Tracking
+Each detected vehicle is assigned a unique ID to track it across frames.
 
-Interactive Streamlit dashboard
+### 3. Speed Estimation
 
-Multi-video support with custom detection lines
+Each video contains two predefined reference lines.
 
-System Architecture
-
-The system consists of the following components:
-
-1. Object Detection
-
-YOLOv8 is used to detect vehicles in each video frame. Bounding boxes are generated for each detected vehicle.
-
-2. Object Tracking
-
-Detected vehicles are assigned unique IDs to track their movement across frames.
-
-3. Speed Estimation
-
-Each video has two predefined reference lines. When a tracked vehicle crosses the first line, a timestamp is recorded. When it crosses the second line, another timestamp is captured.
+When a vehicle crosses:
+- Line 1 → Start timestamp is recorded.
+- Line 2 → End timestamp is recorded.
 
 Speed is calculated using:
 
-Speed = Distance / Time
-
-If:
-Speed > 30 km/h (configurable threshold)
-
 The vehicle is marked as a violator.
 
-4. License Plate Recognition
+---
 
-OCR is applied to the detected plate region to extract the vehicle number.
+### 4. License Plate Recognition
 
-5. Vehicle Attribute Extraction
+OCR is applied to extract the license plate number from the detected plate region.
+
+---
+
+### 5. Vehicle Attribute Extraction
 
 The system estimates:
+- Vehicle color
+- Vehicle model (if classifier is available)
 
-Vehicle color
+---
 
-Vehicle model (if classifier available)
+### 6. Gemini API Integration
 
-6. Gemini API Integration
+When a violation is detected, structured vehicle data is sent to Gemini API.
 
-When a violation is detected, the system sends structured vehicle data to the Gemini API.
 Gemini generates a formatted violation report including:
+- Plate number
+- Estimated speed
+- Time of violation
+- Vehicle description
 
-Vehicle number
+---
 
-Estimated speed
+### 7. Database Storage
 
-Time of violation
+Violation data is stored in MySQL:
 
-Vehicle description
+- Plate number
+- Speed
+- Color
+- Model
+- Video source
+- Timestamp
 
-7. Database Storage
+---
 
-Violation data is stored in a MySQL database including:
-
-Vehicle ID
-
-Plate number
-
-Speed
-
-Color
-
-Model
-
-Video source
-
-Timestamp
-
-8. Streamlit Dashboard
+### 8. Streamlit Dashboard
 
 The dashboard allows:
+- Selecting between multiple videos
+- Running detection
+- Displaying only violating vehicles
+- Viewing violation records in a structured table
 
-Selecting between multiple videos
+---
 
-Running detection
 
-Displaying only violating vehicles
+---
 
-Viewing violation records in a structured table
+## Technologies Used
 
-Project Structure
-project/
-│
-├── app.py                  # Streamlit dashboard
-├── speed_estimator.py      # Speed calculation logic
-├── detector.py             # YOLO detection logic
-├── ocr_module.py           # License plate recognition
-├── gemini_report.py        # Gemini API integration
-├── database.py             # MySQL connection and queries
-├── video_lines.py          # Detection line coordinates
-├── models/                 # YOLO and classification models
-└── requirements.txt
-Technologies Used
+- Python
+- OpenCV
+- YOLOv8
+- EasyOCR / Tesseract
+- MySQL
+- Streamlit
+- Gemini API
+- NumPy
+- Pandas
 
-Python
+---
 
-OpenCV
+## Installation
 
-YOLOv8
+### 1. Clone the Repository
 
-EasyOCR / Tesseract
-
-MySQL
-
-Streamlit
-
-Gemini API
-
-NumPy
-
-Pandas
-
-Installation
-1. Clone the repository
-git clone https://github.com/your-username/vehicle-speed-detection.git
-cd vehicle-speed-detection
-2. Create virtual environment
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-3. Install dependencies
-pip install -r requirements.txt
-4. Configure Environment Variables
-
-Create a .env file and add:
-
-GEMINI_API_KEY=your_api_key_here
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=traffic_system
-Running the Application
-
-To start the Streamlit dashboard:
-
-streamlit run app.py
-
-Then open the browser at:
-
-http://localhost:8501
-Multi-Video Support
-
-Each video has custom detection lines defined in:
-
-video_lines.py
-
-Example:
-
-"video1.mp4": [(1527, 97), (2, 71)]
-
-This allows different camera angles and road layouts to be handled independently.
-
-Database Schema
-
-Example table structure:
-
-CREATE TABLE violations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    plate_number VARCHAR(50),
-    speed FLOAT,
-    color VARCHAR(50),
-    model VARCHAR(100),
-    video_source VARCHAR(100),
-    violation_time DATETIME
-);
-Future Improvements
-
-Real-time live camera support
-
-Automated fine calculation
-
-SMS or email notification system
-
-Cloud deployment
-
-Improved plate detection accuracy
-
-Edge device optimization
-
-Analytics dashboard for violation trends
-
-Limitations
-
-Speed accuracy depends on correct distance calibration
-
-OCR performance depends on lighting and plate visibility
-
-Model accuracy may vary depending on camera angle
-
-System currently optimized for controlled video input
-
-Conclusion
-
-This project demonstrates a complete AI-powered traffic monitoring pipeline integrating computer vision, tracking, database systems, and generative AI reporting.
-
-It is designed not only as a technical implementation but as a potential real-world product foundation for smart traffic systems and automated law enforcement solutions.
+### 2. Create Virtual Environment
